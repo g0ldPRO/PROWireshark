@@ -17,7 +17,7 @@ The goal of Wireshark is to show the packets of data that PRO sends on your netw
 The protocol of PRO is a text protocol (in opposition with a binary protocol), an instruction looks like this: `HEADER|.|PARAMETER1|.|PARAMETER2|.\\r\n`
 
  * `|.|` is a separator.
- * `|.\[\\r\\n]`(https://en.wikipedia.org/wiki/Newline) is the end of an instruction.
+ * `|.\\r\n` is the end of an instruction, `\r\n` is a [newline character on Windows](https://en.wikipedia.org/wiki/Newline).
 
 As defined by the TCP protocol, a packet can contain several concatenated instructions (see the wireshark section).
 
