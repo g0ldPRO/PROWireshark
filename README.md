@@ -46,7 +46,7 @@ We could spend this whole tutorial talking about the terrible choices made by th
 ##Wireshark
 
 * [Download](https://www.wireshark.org/#download) and [install](https://www.wireshark.org/docs/wsug_html_chunked/ChBuildInstallWinInstall.html) Wireshark.
-* [Download pro.lua, the Lua dissector script.](https://gist.github.com/g0ldPRO/4a089d3332a1ef8445b39c17f337133f)
+* [Download pro.lua, the Lua dissector script.](https://raw.githubusercontent.com/g0ldPRO/PROWireshark/master/pro.lua)
 * Copy the pro.lua file in the plugins directory of Wireshark. Something like: *%programfiles%\Wireshark\plugins\2.0.2*
 * Open Wireshark.
 * Go in `Analyze>Enabled Protocols`, search `Pokemon`, check the box of *PRO*.
