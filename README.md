@@ -2,8 +2,6 @@
 
 I made a **Lua** dissector for [Wireshark](https://www.wireshark.org/), an open source protocol analyser.
 
-[Link](https://gist.github.com/g0ldPRO/4a089d3332a1ef8445b39c17f337133f)
-
 (I blame [lua-mode.el](http://immerrr.github.io/lua-mode/) for the absurd extra tabulations)
 
 ##What does it mean?
