@@ -8,21 +8,33 @@ pro_proto = Proto("pro","Pokemon Revolution Offline protocol")
 	 /takeitem 1
 ]]--
 
+Packet = {header, description, parameters = {}}
+function Packet:new(o)
+	 o = o or {}   -- create object if user does not provide one
+	 setmetatable(o, self)
+	 self.__index = self
+	 
+	 self.header      = o[1]
+	 self.description = o[2]
+	 self.parameters  = o[3]
+	 return o
+end
+
 clientToServerPacketInfos = {
-	 {"N",   "Talk to NPC"},
-	 {"p",   "Pokedex"},
-	 {"h",   "Evolution Accept"},
-	 {"j",   "Evolution Cancel"},
-	 {"+",   "Login"},
-	 {"(",   "Battle Action"},
-	 {"R",   "Dialogue Choice"},
-	 {"M",   "PC"},
-	 {"?",   "Reorder Pokemon"},
-	 {"}",   "Move"},
-	 {"{",   "Chat Send Message"},
-	 {"a",   "Shop Move Learner"},
-	 {".",   "Shop Egg Learner"},
-	 {"c",   "Shop Pokemart"},
+	 Packet.new{"N",   "Talk to NPC"},
+	 Packet.new{"p",   "Pokedex"},
+	 Packet.new{"h",   "Evolution Accept"},
+	 Packet.new{"j",   "Evolution Cancel"},
+	 Packet.new{"+",   "Login"},
+	 Packet.new{"(",   "Battle Action"},
+	 Packet.new{"R",   "Dialogue Choice"},
+	 Packet.new{"M",   "PC"},
+	 Packet.new{"?",   "Reorder Pokemon"},
+	 Packet.new{"}",   "Move"},
+	 Packet.new{"Packet.new{",   "Chat Send Message"},
+	 Packet.new{"a",   "Shop Move Learner"},
+	 Packet.new{".",   "Shop Egg Learner"},
+	 Packet.new{"c",   "Shop Pokemart"},
 	 --[[ 
 			#155 Escape Rope
 			>	*|.|155|.\
@@ -39,107 +51,105 @@ clientToServerPacketInfos = {
 			- 5           useItem in combat
 			- 2           useItem on Pokemon in combat			
 	 ]]--
-	 {"*",   "Use Item"},
-	 {":",   "Guild Logo"},
-	 {"mb",  "No ??"},
-	 {"l",   "Purchase Coin"},
-	 {"]",   "Purchase Guild Logo"},
-	 {"z",   "Purchase Egg Move"},
-	 {"b",   "Purchase Move"},
-	 {"RE",  "Send Report"},
-	 {"f",   "Show Friend"},
-	 {"ah",  "Ban"},
-	 {"btt", "Ban Speedhack"},
-	 {"id",  "Ban Injection"},
-	 {"sh",  "Ban Speedhack"},
-	 {"2",   "Ask Avatar Refresh"},
-	 {"S",   "Send Sync ???"},
-	 {"_",   "Pong"},
-	 {"-",   "Ask NPC Refresh"},
+	 Packet.new{"*",   "Use Item"},
+	 Packet.new{":",   "Guild Logo"},
+	 Packet.new{"mb",  "No ??"},
+	 Packet.new{"l",   "Purchase Coin"},
+	 Packet.new{"]",   "Purchase Guild Logo"},
+	 Packet.new{"z",   "Purchase Egg Move"},
+	 Packet.new{"b",   "Purchase Move"},
+	 Packet.new{"RE",  "Send Report"},
+	 Packet.new{"f",   "Show Friend"},
+	 Packet.new{"ah",  "Ban"},
+	 Packet.new{"btt", "Ban Speedhack"},
+	 Packet.new{"id",  "Ban Injection"},
+	 Packet.new{"sh",  "Ban Speedhack"},
+	 Packet.new{"2",   "Ask Avatar Refresh"},
+	 Packet.new{"S",   "Send Sync ???"},
+	 Packet.new{"_",   "Pong"},
+	 Packet.new{"-",   "Ask NPC Refresh"},
 	 -- k|.|pokecenter lavender|.\
-	 {"k",   "Request Map Wild Pokemon", 1, "Map name"},
+	 Packet.new{"k",   "Request Map Wild Pokemon", {"Map name"}},
 	 --   follow an instruction like Use Item (*)
-	 {"^",   "Teach Move ", 2, "Pokemon (1 to 6)", "Move position (1 to 4 or 0 for none)"}
+	 Packet.new{"^",   "Teach Move", {"PokemonUid", "MoveUid"}}
 }
 
 serverToClientPacketInfos = {
-	 {"w",   "Chat Message"},
-	 {".",   "Ping"},
-	 {"-",   "???"},
-	 {"U",   "Other player position"},
-	 {"E",   "Game Time"},
-	 {"i",   "Character Informations"},
-	 {"(",   "Cooldowns ???"},
-	 {"]",   "Guild Logo Add"},
-	 {";",   "Guild Logo Remove"},
-	 {"o",   "Handle Shop"},
-	 {"l",   "Move Relearn"},
-	 {",",   "Egg Move Relearn"},
-	 {"7",   "Error Rising Badge"},             -- You will be unable to use Pokemon from other regions in this region until you earn the Rising Badge!
-	 {"8",   "Error Invalid Region Trade"},     -- The person you are trading with can not take Pokemon from another region.
-	 {"9",   "Error Trade Pokemon Quest Item"}, -- You can not trade a Pokemon that it is holding a Quest Item.
-	 {"0",   "Error Trade Legendary"},          -- You can not trade a Legendary Pokemon.
-	 {"'",   "Does nothing?"},
-	 {"k",   "Map Wild Pokemon"},
-	 {"x",   "Pokemon Happyness"},
-	 {"p",   "Pokedex Message"},
-	 {"t",   "Trade"},
-	 {"tb",  "Trade Accept? with args"},
-	 {"tu",  "Trade Update"},
-	 {"ta",  "Trade Accept"},
-	 {"tc",  "Trade Cancel"},
-	 {"m",   "Start Combat"},
-	 {"h",   "Evolution"},
-	 {"z",   "Receive Position"},
-	 {"pm",  "Receive a Private Message"},
-	 {"&",   "Receive items"},
-	 {"^",   "Learned Move"},
-	 {"mb",  "Start battle?"},
-	 {"!",   "Show Battle"},
-	 {"@",   "Creates NPC"},
-	 {"*",   "Creates All NPC"},
-	 {"a",   "Battle Text"},
-	 {"$",   "Use Bike", 1, "always 1?"},
-	 {"%",   "Use Surf"},
-	 {"r",   "Handle Script"},
-	 {"c",   "Chat Create Channel"},
-	 {"g",   "Friend Connection Alert"},
-	 {"f",   "Friend List Sort"},
-	 {"[",   "Roster Sort"},
-	 {"e",   "Send Meteo"},
-	 {"u",   "???"},
-	 {"S",   "Avatar Location"},
-	 {"s",   "???"},
-	 {"q",   "Map Load"},
-	 {"y",   "Guild Info"},
-	 {"i",   "Guild Join"},
-	 {"d",   "Money"},
-	 {"(",   "Fishing CD"},
-	 {"5",   "Login"},
-	 {"6",   "Login Invalid User"},
-	 {"1",   "Create NPC"},
-	 {")",   "Login Queue"},
-	 {"R",   "Dialogue"},
-	 {"#",   "Profile Update"}
+	 Packet.new{"w",   "Chat Message"},
+	 Packet.new{".",   "Ping"},
+	 Packet.new{"-",   "???"},
+	 Packet.new{"U",   "Other player position"},
+	 Packet.new{"E",   "Game Time"},
+	 Packet.new{"i",   "Character Informations"},
+	 Packet.new{"(",   "Cooldowns ???"},
+	 Packet.new{"]",   "Guild Logo Add"},
+	 Packet.new{";",   "Guild Logo Remove"},
+	 Packet.new{"o",   "Handle Shop"},
+	 Packet.new{"l",   "Move Relearn"},
+	 Packet.new{",",   "Egg Move Relearn"},
+	 Packet.new{"7",   "Error Rising Badge"},             -- You will be unable to use Pokemon from other regions in this region until you earn the Rising Badge!
+	 Packet.new{"8",   "Error Invalid Region Trade"},     -- The person you are trading with can not take Pokemon from another region.
+	 Packet.new{"9",   "Error Trade Pokemon Quest Item"}, -- You can not trade a Pokemon that it is holding a Quest Item.
+	 Packet.new{"0",   "Error Trade Legendary"},          -- You can not trade a Legendary Pokemon.
+	 Packet.new{"'",   "Does nothing?"},
+	 Packet.new{"k",   "Map Wild Pokemon"},
+	 Packet.new{"x",   "Pokemon Happyness"},
+	 Packet.new{"p",   "Pokedex Message"},
+	 Packet.new{"t",   "Trade"},
+	 Packet.new{"tb",  "Trade Accept? with args"},
+	 Packet.new{"tu",  "Trade Update"},
+	 Packet.new{"ta",  "Trade Accept"},
+	 Packet.new{"tc",  "Trade Cancel"},
+	 Packet.new{"m",   "Start Combat"},
+	 Packet.new{"h",   "Evolution"},
+	 Packet.new{"z",   "Receive Position"},
+	 Packet.new{"pm",  "Receive a Private Message"},
+	 Packet.new{"&",   "Receive items"},
+	 Packet.new{"^",   "Learned Move"},
+	 Packet.new{"mb",  "Start battle?"},
+	 Packet.new{"!",   "Show Battle"},
+	 Packet.new{"@",   "Creates NPC"},
+	 Packet.new{"*",   "Creates All NPC"},
+	 Packet.new{"a",   "Battle Text"},
+	 Packet.new{"$",   "Use Bike", 1, "always 1?"},
+	 Packet.new{"%",   "Use Surf"},
+	 Packet.new{"r",   "Handle Script"},
+	 Packet.new{"c",   "Chat Create Channel"},
+	 Packet.new{"g",   "Friend Connection Alert"},
+	 Packet.new{"f",   "Friend List Sort"},
+	 Packet.new{"[",   "Roster Sort"},
+	 Packet.new{"e",   "Send Meteo"},
+	 Packet.new{"u",   "???"},
+	 Packet.new{"S",   "Avatar Location"},
+	 Packet.new{"s",   "???"},
+	 Packet.new{"q",   "Map Load"},
+	 Packet.new{"y",   "Guild Info"},
+	 Packet.new{"i",   "Guild Join"},
+	 Packet.new{"d",   "Money"},
+	 Packet.new{"(",   "Fishing CD"},
+	 Packet.new{"5",   "Login"},
+	 Packet.new{"6",   "Login Invalid User"},
+	 Packet.new{"1",   "Create NPC"},
+	 Packet.new{")",   "Login Queue"},
+	 Packet.new{"R",   "Dialogue"},
+	 Packet.new{"#",   "Profile Update"}
 }
 
 local endOfPacket = [[.\]] .. "\r\n"
 
-function dissectParameters(data, packetStart, packet)
+function dissectParameters(packetInfo, data, offset, packet)
 	 local parameterId = 1
 	 local index = 0
 	 while true do
-			-- TODO: pass the parameters without the header to avoid redondance
-			local parameterStart, parameterEnd, parameter = packet:find("|%.|(.-|)%.", index)
-			-- do not even try to understand this, just because a Lua array starts at 1 it is a freaking mess
-			local offset = 1
-			
+			-- no regexp in Lua, its pattern matching has some limitations
+			local parameterStart, parameterEnd, parameter = packet:find("(.-|)%.|", index)
 			if parameter == nil then
-				 -- exception for the stupig Uparam1|param2 instead of u|.|param1|param2
-				 parameterStart, parameterEnd, parameter = packet:find("U(.-|)%.", index)
-				 offset = -1
-				 if parameter == nil then break end
+						 parameterStart, parameterEnd, parameter = packet:find("(.-|)%.\\", index)
 			end
+			-- do not even try to understand this, just because a Lua array starts at 1 it is a freaking mess
+			local loffset = 1
+			
+			if parameter == nil then break end
 			
 			local subParams = {}
 			local subIndex = 0
@@ -152,8 +162,12 @@ function dissectParameters(data, packetStart, packet)
 				 subId = subId + 1
 			end
 			-- parameter:sub(1, parameter:len() - 1) remove the trailing '|'
-			local subParamsTree = data.tree:add(data.buffer(packetStart + parameterStart + offset, parameter:len() - 1),
-																					"Parameter" .. parameterId .. ": " .. parameter:sub(1, parameter:len() - 1))
+			local parameterName = " Parameter" .. parameterId
+			if packetInfo.parameters ~= nil and #(packetInfo.parameters) >= parameterId then
+				 parameterName = packetInfo.parameters[parameterId]
+			end
+			local subParamsTree = data.tree:add(data.buffer(offset + parameterStart + loffset, parameter:len() - 1),
+																					parameterName .. ": " .. parameter:sub(1, parameter:len() - 1))
 			if #subParams > 1 then
 				 local i = 1
 				 while i <= #subParams do
@@ -161,29 +175,40 @@ function dissectParameters(data, packetStart, packet)
 						if i < 10 then
 							 istring = "0" .. iString
 						end
-						-- offset - 1 because the subParameterStart was starting at 1
-						subParamsTree:add(data.buffer(packetStart + parameterStart + offset - 1 + subParams[i][1], subParams[i][3]:len()),
+						-- loffset - 1 because the subParameterStart was starting at 1
+						subParamsTree:add(data.buffer(offset + parameterStart + loffset - 1 + subParams[i][1], subParams[i][3]:len()),
 															"SubParameter" .. iString .. ": " .. subParams[i][3])
 						i = i + 1
 				 end
 			end
 			
 			parameterId = parameterId + 1
-			index = parameterEnd - 1
+			index = parameterEnd + 1
 	 end
 end
 
 function dissectPacket(packetInfo, data, packetStart, packetEnd, packet, headersFound)
-	 data.tree:add(data.buffer(packetStart - 1, packetEnd - packetStart), "Description: " .. packetInfo[2])
-	 data.tree:add(data.buffer(packetStart - 1, packetInfo[1]:len()),     "Header:      " .. packetInfo[1])
-	 dissectParameters(data, packetStart, packet)
+	 data.tree:add(data.buffer(packetStart - 1, packetEnd - packetStart), "Description: " .. packetInfo.description)
+	 data.tree:add(data.buffer(packetStart - 1, packetInfo.header:len()),     "Header:      " .. packetInfo.header)
+
+	 
+	 local parametersStart, parametersEnd, parameters
+	 if packetInfo.header == "U" then
+			parametersStart, parametersEnd, parameters = packet:find("U(.*)")
+			parametersStart = parametersStart - 3
+	 else
+			parametersStart, parametersEnd, parameters = packet:find(".-|%.|(.*)")
+	 end
+	 if parameters ~= nil then
+			dissectParameters(packetInfo, data, packetStart + parametersStart, parameters)
+	 end
 	 data.tree:add(data.buffer(packetStart - 1, packetEnd - packetStart), "Packet:      " .. packet)
 	 packetFound = true
 	 localPacketFound = true
-	 if headersFound[packetInfo[2]] == nil then
-			headersFound[packetInfo[2]] = 0
+	 if headersFound[packetInfo.description] == nil then
+			headersFound[packetInfo.description] = 0
 	 end
-	 headersFound[packetInfo[2]] = headersFound[packetInfo[2]] + 1
+	 headersFound[packetInfo.description] = headersFound[packetInfo.description] + 1
 end
 
 function bindPacket(packetList, data)
@@ -196,20 +221,20 @@ function bindPacket(packetList, data)
 			if packet == nil then break end
 			local localPacketFound = false
 			for i, packetInfo in ipairs(packetList) do
-				 if packet:find(packetInfo[1] .. "|", 1, true) == 1 then
+				 if packet:find(packetInfo.header .. "|", 1, true) == 1 then
 						dissectPacket(packetInfo, data, packetStart, packetEnd, packet, headersFound)
 						packetFound = true
 						localPacketFound = true
 						break
 				 end
 			end
-			if localPacketFound == false and packet:find(serverToClientPacketInfos[4][1], 1, true) == 1 then
+			if localPacketFound == false and packet:find(serverToClientPacketInfos[4].header, 1, true) == 1 then
 				 dissectPacket(serverToClientPacketInfos[4], data, packetStart, packetEnd, packet, headersFound)
 				 packetFound = true
 				 localPacketFound = true
 			elseif localPacketFound == false then
 				 local headerStart, headerEnd, header = packet:find("(.-|)", index)
-				 dissectPacket({header, "UNKNOWN"}, data, packetStart, packetEnd, packet, headersFound)
+				 dissectPacket(Packet:new{header, "UNKNOWN"}, data, packetStart, packetEnd, packet, headersFound)
 			end
 			index = packetEnd + 1
 	 end
