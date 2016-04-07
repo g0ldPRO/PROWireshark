@@ -75,10 +75,10 @@ clientToServerPacketInfos = {
 }
 
 serverToClientPacketInfos = {
-	 Packet.new{"w",   "Chat Message"},
+	 Packet.new{"w",   "Chat Message", {"Message"}},
 	 Packet.new{".",   "Ping"},
 	 Packet.new{"-",   "???"},
-	 Packet.new{"U",   "Other player position"},
+	 Packet.new{"U",   "Other player position", {{"Nickname"}}},
 	 Packet.new{"E",   "Game Time"},
 	 Packet.new{"i",   "Character Informations"},
 	 Packet.new{"(",   "Cooldowns ???"},
@@ -135,9 +135,9 @@ serverToClientPacketInfos = {
 	 Packet.new{"#",   "Profile Update"}
 }
 
-local endOfPacket = [[.\]] .. "\r\n"
+local endOfPacket = "%.\\\r\n"
 
-function dissectParameters(packetInfo, data, offset, packet)
+function dissectParameters(packetInfo, packetTree, data, offset, packet)
 	 local parameterId = 1
 	 local index = 0
 	 while true do
@@ -162,11 +162,18 @@ function dissectParameters(packetInfo, data, offset, packet)
 				 subId = subId + 1
 			end
 			-- parameter:sub(1, parameter:len() - 1) remove the trailing '|'
-			local parameterName = " Parameter" .. parameterId
-			if packetInfo.parameters ~= nil and #(packetInfo.parameters) >= parameterId then
-				 parameterName = packetInfo.parameters[parameterId]
+			local parameterName = "Parameter" .. parameterId
+			local subParametersNames
+			if packetInfo.parameters ~= nil
+				 and packetInfo.parameters[parameterId] ~= nil
+			then
+				 if type(packetInfo.parameters[parameterId]) == "string" then
+						parameterName = packetInfo.parameters[parameterId]
+				 elseif type(packetInfo.parameters[parameterId]) == "table" then
+						subParametersNames = packetInfo.parameters[parameterId]
+				 end
 			end
-			local subParamsTree = data.tree:add(data.buffer(offset + parameterStart + loffset, parameter:len() - 1),
+			local subParamsTree = packetTree:add(data.buffer(offset + parameterStart + loffset, parameter:len() - 1),
 																					parameterName .. ": " .. parameter:sub(1, parameter:len() - 1))
 			if #subParams > 1 then
 				 local i = 1
@@ -176,8 +183,16 @@ function dissectParameters(packetInfo, data, offset, packet)
 							 istring = "0" .. iString
 						end
 						-- loffset - 1 because the subParameterStart was starting at 1
+						local subParameterName = "SubParameter" .. iString
+						if subParametersNames ~= nil
+							 and subParametersNames[i] ~= nil
+							 and type(subParametersNames[i]) == "string"
+						then
+							 subParameterName = subParametersNames[i]
+						end
+
 						subParamsTree:add(data.buffer(offset + parameterStart + loffset - 1 + subParams[i][1], subParams[i][3]:len()),
-															"SubParameter" .. iString .. ": " .. subParams[i][3])
+															subParameterName .. ": " .. subParams[i][3])
 						i = i + 1
 				 end
 			end
@@ -188,8 +203,8 @@ function dissectParameters(packetInfo, data, offset, packet)
 end
 
 function dissectPacket(packetInfo, data, packetStart, packetEnd, packet, headersFound)
-	 data.tree:add(data.buffer(packetStart - 1, packetEnd - packetStart), "Description: " .. packetInfo.description)
-	 data.tree:add(data.buffer(packetStart - 1, packetInfo.header:len()),     "Header:      " .. packetInfo.header)
+	 local packetTree = data.tree:add(data.buffer(packetStart - 1, packetEnd - packetStart), "Description: " .. packetInfo.description)
+	 packetTree:add(data.buffer(packetStart - 1, packetInfo.header:len()),     "Header:      " .. packetInfo.header)
 
 	 
 	 local parametersStart, parametersEnd, parameters
@@ -200,9 +215,9 @@ function dissectPacket(packetInfo, data, packetStart, packetEnd, packet, headers
 			parametersStart, parametersEnd, parameters = packet:find(".-|%.|(.*)")
 	 end
 	 if parameters ~= nil then
-			dissectParameters(packetInfo, data, packetStart + parametersStart, parameters)
+			dissectParameters(packetInfo, packetTree, data, packetStart + parametersStart, parameters)
 	 end
-	 data.tree:add(data.buffer(packetStart - 1, packetEnd - packetStart), "Packet:      " .. packet)
+	 packetTree:add(data.buffer(packetStart - 1, packetEnd - packetStart), "Packet:      " .. packet)
 	 packetFound = true
 	 localPacketFound = true
 	 if headersFound[packetInfo.description] == nil then
@@ -282,7 +297,7 @@ function pro_proto.dissector(buffer,pinfo,tree)
 			packetFound = bindPacket(clientToServerPacketInfos, data)
 	 end
 	 pinfo.cols.info = data.infoField;
-	 data.tree:add(buffer(0,buffer:len()), data.proData)
+	 -- data.tree:add(buffer(0,buffer:len()), data.proData)
 end
 -- load the tcp.port table
 tcp_table = DissectorTable.get("tcp.port")
