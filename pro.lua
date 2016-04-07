@@ -21,7 +21,7 @@ function Packet:new(o)
 end
 
 clientToServerPacketInfos = {
-	 Packet.new{"N",   "Talk to NPC"},
+	 Packet.new{"N",   "Talk to NPC", {"NPC ID"}},
 	 Packet.new{"p",   "Pokedex"},
 	 Packet.new{"h",   "Evolution Accept"},
 	 Packet.new{"j",   "Evolution Cancel"},
@@ -30,8 +30,8 @@ clientToServerPacketInfos = {
 	 Packet.new{"R",   "Dialogue Choice"},
 	 Packet.new{"M",   "PC"},
 	 Packet.new{"?",   "Reorder Pokemon"},
-	 Packet.new{"}",   "Move"},
-	 Packet.new{"Packet.new{",   "Chat Send Message"},
+	 Packet.new{"}",   "Move", {"Direction"}},
+	 Packet.new{"w",   "Chat Send Message"},
 	 Packet.new{"a",   "Shop Move Learner"},
 	 Packet.new{".",   "Shop Egg Learner"},
 	 Packet.new{"c",   "Shop Pokemart"},
