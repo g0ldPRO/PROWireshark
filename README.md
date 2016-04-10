@@ -51,7 +51,7 @@ We could spend this whole tutorial talking about the terrible choices made by th
 * Open Wireshark.
 * Go in `Analyze>Enabled Protocols`, search `Pokemon`, check the box of *PRO*.
 * Optional: you can also enabled different colours for the client packets and server packets, to do so go to View>Coloring Rules, create a new one, call it *PRO* (the name does not matter), enter `pro and tcp.srcport==800` as a filter then define your background and foreground colours. I use black as foreground and #a7c9ca as background.
-* Chose the your network interface. For instance mine is *Wireless Network Connection*, in *"... using filter:"* enter `port 800`, that's the port used by the server of PRO. If you do not enter this filter everything will still work but you will unwillingly capture packets that are not related to the protocol we are interesting in.
+* Chose your network interface. For instance mine is *Wireless Network Connection*, in *"... using filter:"* enter `port 800`, that's the port used by the server of PRO. If you do not enter this filter everything will still work but you will unwillingly capture packets that are not related to the protocol we are interesting in.
 ![](http://i.imgur.com/GgY0tdV.png)
 * Double click your network interface.
 * Enter `pro` as a display filter
