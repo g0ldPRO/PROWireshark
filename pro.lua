@@ -2,7 +2,7 @@
 pro_proto = Proto("pro","Pokemon Revolution Offline protocol")
 
 --[[
-	 give pecha berry to pokemon 1 (will replace the item if needed):
+	 give pecha berry to pokemon 1 (will swap the item if needed):
 	 /giveitem 1, 525
 	 take item of Pokemon 1
 	 /takeitem 1
@@ -23,18 +23,18 @@ end
 clientToServerPacketInfos = {
 	 Packet.new{"N",   "Talk to NPC", {"NPC ID"}},
 	 Packet.new{"p",   "Pokedex"},
-	 Packet.new{"h",   "Evolution Accept"},
-	 Packet.new{"j",   "Evolution Cancel"},
+	 Packet.new{"h",   "Evolution accept"},
+	 Packet.new{"j",   "Evolution cancel"},
 	 Packet.new{"+",   "Login"},
-	 Packet.new{"(",   "Battle Action"},
-	 Packet.new{"R",   "Dialogue Choice"},
+	 Packet.new{"(",   "Battle action"},
+	 Packet.new{"R",   "Dialogue choice"},
 	 Packet.new{"M",   "PC"},
-	 Packet.new{"?",   "Reorder Pokemon"},
+	 Packet.new{"?",   "Reorder pokemon"},
 	 Packet.new{"}",   "Move", {"Direction"}},
-	 Packet.new{"w",   "Chat Send Message"},
-	 Packet.new{"a",   "Shop Move Learner"},
-	 Packet.new{".",   "Shop Egg Learner"},
-	 Packet.new{"c",   "Shop Pokemart"},
+	 Packet.new{"w",   "Chat send message"},
+	 Packet.new{"a",   "Shop move learner"},
+	 Packet.new{".",   "Shop egg learner"},
+	 Packet.new{"c",   "Shop pokemart"},
 	 --[[ 
 			#155 Escape Rope
 			>	*|.|155|.\
@@ -49,90 +49,92 @@ clientToServerPacketInfos = {
 			- 8/10/15     useItem out of combat
 			- 2/13/14/3/9 useItem on Pokemon out of combat
 			- 5           useItem in combat
-			- 2           useItem on Pokemon in combat			
+			- 2           useItem on Pokemon in combat
 	 ]]--
-	 Packet.new{"*",   "Use Item"},
-	 Packet.new{":",   "Guild Logo"},
-	 Packet.new{"mb",  "No ??"},
-	 Packet.new{"l",   "Purchase Coin"},
-	 Packet.new{"]",   "Purchase Guild Logo"},
-	 Packet.new{"z",   "Purchase Egg Move"},
-	 Packet.new{"b",   "Purchase Move"},
-	 Packet.new{"RE",  "Send Report"},
-	 Packet.new{"f",   "Show Friend"},
+	 Packet.new{"*",   "Use item"},
+	 Packet.new{":",   "Guild logo"},
+	 Packet.new{"mb",  "Valid action"},
+	 Packet.new{"l",   "Purchase coin"},
+	 Packet.new{"]",   "Purchase guild logo"},
+	 Packet.new{"z",   "Purchase egg move"},
+	 Packet.new{"b",   "Purchase move"},
+	 Packet.new{"RE",  "Send report"},
+	 Packet.new{"f",   "Show friend"},
 	 Packet.new{"ah",  "Ban"},
-	 Packet.new{"btt", "Ban Speedhack"},
-	 Packet.new{"id",  "Ban Injection"},
-	 Packet.new{"sh",  "Ban Speedhack"},
-	 Packet.new{"2",   "Ask Avatar Refresh"},
-	 Packet.new{"S",   "Send Sync ???"},
+	 Packet.new{"btt", "Ban speedhack"},
+	 Packet.new{"id",  "Ban injection"},
+	 Packet.new{"sh",  "Ban speedhack"},
+	 Packet.new{"2",   "Ask avatar refresh"},
+	 Packet.new{"S",   "Send sync ???"},
 	 Packet.new{"_",   "Pong"},
-	 Packet.new{"-",   "Ask NPC Refresh"},
+	 Packet.new{"-",   "Ask NPC refresh"},
 	 -- k|.|pokecenter lavender|.\
-	 Packet.new{"k",   "Request Map Wild Pokemon", {"Map name"}},
+	 Packet.new{"k",   "Request map wild pokemon", {"Map name"}},
 	 --   follow an instruction like Use Item (*)
-	 Packet.new{"^",   "Teach Move", {"PokemonUid", "MoveUid"}}
+	 Packet.new{"^",   "Teach move", {"PokemonUid", "MoveUid"}},
+	 Packet.new{"{",   "Send message", {"Message"}}
 }
 
 serverToClientPacketInfos = {
-	 Packet.new{"w",   "Chat Message", {"Message"}},
+	 Packet.new{"w",   "Chat message", {"Message"}},
 	 Packet.new{".",   "Ping"},
 	 Packet.new{"-",   "???"},
 	 Packet.new{"U",   "Other player position", {{"Nickname"}}},
-	 Packet.new{"E",   "Game Time"},
-	 Packet.new{"i",   "Character Informations"},
+	 Packet.new{"E",   "Game time"},
+	 Packet.new{"i",   "Character informations"},
 	 Packet.new{"(",   "Cooldowns ???"},
-	 Packet.new{"]",   "Guild Logo Add"},
-	 Packet.new{";",   "Guild Logo Remove"},
-	 Packet.new{"o",   "Handle Shop"},
-	 Packet.new{"l",   "Move Relearn"},
-	 Packet.new{",",   "Egg Move Relearn"},
-	 Packet.new{"7",   "Error Rising Badge"},             -- You will be unable to use Pokemon from other regions in this region until you earn the Rising Badge!
-	 Packet.new{"8",   "Error Invalid Region Trade"},     -- The person you are trading with can not take Pokemon from another region.
-	 Packet.new{"9",   "Error Trade Pokemon Quest Item"}, -- You can not trade a Pokemon that it is holding a Quest Item.
-	 Packet.new{"0",   "Error Trade Legendary"},          -- You can not trade a Legendary Pokemon.
+	 Packet.new{"]",   "Guild logo add"},
+	 Packet.new{";",   "Guild logo remove"},
+	 Packet.new{"o",   "Handle shop"},
+	 Packet.new{"l",   "Move relearn"},
+	 Packet.new{",",   "Egg move relearn"},
+	 Packet.new{"7",   "Error rising badge"},             -- You will be unable to use Pokemon from other regions in this region until you earn the Rising Badge!
+	 Packet.new{"8",   "Error invalid region trade"},     -- The person you are trading with can not take Pokemon from another region.
+	 Packet.new{"9",   "Error trade pokemon quest item"}, -- You can not trade a Pokemon that it is holding a Quest Item.
+	 Packet.new{"0",   "Error trade legendary"},          -- You can not trade a Legendary Pokemon.
 	 Packet.new{"'",   "Does nothing?"},
-	 Packet.new{"k",   "Map Wild Pokemon"},
-	 Packet.new{"x",   "Pokemon Happyness"},
-	 Packet.new{"p",   "Pokedex Message"},
+	 Packet.new{"k",   "Map wild pokemon"},
+	 Packet.new{"x",   "Pokemon happyness"},
+	 Packet.new{"p",   "Pokedex message"},
 	 Packet.new{"t",   "Trade"},
-	 Packet.new{"tb",  "Trade Accept? with args"},
-	 Packet.new{"tu",  "Trade Update"},
-	 Packet.new{"ta",  "Trade Accept"},
-	 Packet.new{"tc",  "Trade Cancel"},
-	 Packet.new{"m",   "Start Combat"},
+	 Packet.new{"tb",  "Trade accept? with args"},
+	 Packet.new{"tu",  "Trade update"},
+	 Packet.new{"ta",  "Trade accept"},
+	 Packet.new{"tc",  "Trade cancel"},
+	 Packet.new{"m",   "Start combat"},
 	 Packet.new{"h",   "Evolution"},
-	 Packet.new{"z",   "Receive Position"},
-	 Packet.new{"pm",  "Receive a Private Message"},
-	 Packet.new{"&",   "Receive items"},
-	 Packet.new{"^",   "Learned Move"},
-	 Packet.new{"mb",  "Start battle?"},
-	 Packet.new{"!",   "Show Battle"},
-	 Packet.new{"@",   "Creates NPC"},
-	 Packet.new{"*",   "Creates All NPC"},
-	 Packet.new{"a",   "Battle Text"},
-	 Packet.new{"$",   "Use Bike", 1, "always 1?"},
-	 Packet.new{"%",   "Use Surf"},
-	 Packet.new{"r",   "Handle Script"},
-	 Packet.new{"c",   "Chat Create Channel"},
-	 Packet.new{"g",   "Friend Connection Alert"},
-	 Packet.new{"f",   "Friend List Sort"},
-	 Packet.new{"[",   "Roster Sort"},
-	 Packet.new{"e",   "Send Meteo"},
+	 Packet.new{"z",   "Receive position"},
+	 Packet.new{"pm",  "Private message"},
+	 Packet.new{"&",   "Item list"},
+	 Packet.new{"^",   "Learning move"},
+	 Packet.new{"mb",  "Action condition"},
+	 Packet.new{"!",   "Show battle"},
+	 Packet.new{"@",   "NPC"},
+	 Packet.new{"*",   "NPC list"},
+	 Packet.new{"a",   "Battle text"},
+	 Packet.new{"$",   "Use bike", 1, "always 1?"},
+	 Packet.new{"%",   "Use surf"},
+	 Packet.new{"r",   "Handle script"},
+	 Packet.new{"c",   "Chat create channel"},
+	 Packet.new{"g",   "Friend connection alert"},
+	 Packet.new{"f",   "Friend list sort"},
+	 Packet.new{"[",   "Roster sort"},
+	 Packet.new{"e",   "Send meteo"},
 	 Packet.new{"u",   "???"},
-	 Packet.new{"S",   "Avatar Location"},
+	 Packet.new{"S",   "Avatar location"},
 	 Packet.new{"s",   "???"},
-	 Packet.new{"q",   "Map Load"},
-	 Packet.new{"y",   "Guild Info"},
-	 Packet.new{"i",   "Guild Join"},
+	 Packet.new{"q",   "Map load"},
+	 Packet.new{"y",   "Guild info"},
+	 Packet.new{"i",   "Guild join"},
 	 Packet.new{"d",   "Money"},
-	 Packet.new{"(",   "Fishing CD"},
+	 Packet.new{"(",   "Fishing cooldown"},
 	 Packet.new{"5",   "Login"},
-	 Packet.new{"6",   "Login Invalid User"},
+	 Packet.new{"6",   "Login invalid user"},
 	 Packet.new{"1",   "Create NPC"},
-	 Packet.new{")",   "Login Queue"},
+	 Packet.new{")",   "Login queue"},
 	 Packet.new{"R",   "Dialogue"},
-	 Packet.new{"#",   "Profile Update"}
+	 Packet.new{"#",   "Profile update"},
+	 Packet.new{"C",   "Channel list", {{"Count", "ID", "Name"}}}
 }
 
 local endOfPacket = "%.\\\r\n"
