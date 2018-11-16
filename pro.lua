@@ -30,7 +30,8 @@ clientToServerPacketInfos = {
 	 Packet.new{"R",   "Dialogue choice"},
 	 Packet.new{"M",   "PC"},
 	 Packet.new{"?",   "Reorder pokemon"},
-	 Packet.new{"}",   "Move", {"Direction"}},
+	 Packet.new{"}",   "[DEPRECATED] Move", {"Direction"}},
+	 Packet.new{"#",   "Move", {"Direction"}},
 	 Packet.new{"w",   "Chat send message"},
 	 Packet.new{"a",   "Shop move learner"},
 	 Packet.new{".",   "Shop egg learner"},
@@ -72,7 +73,8 @@ clientToServerPacketInfos = {
 	 Packet.new{"k",   "Request map wild pokemon", {"Map name"}},
 	 --   follow an instruction like Use Item (*)
 	 Packet.new{"^",   "Teach move", {"PokemonUid", "MoveUid"}},
-	 Packet.new{"{",   "Send message", {"Message"}}
+	 Packet.new{"{",   "Send message", {"Message"}},
+	 Packet.new{"1",   "Heartbeat"}
 }
 
 serverToClientPacketInfos = {
