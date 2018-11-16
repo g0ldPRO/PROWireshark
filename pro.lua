@@ -66,7 +66,8 @@ clientToServerPacketInfos = {
 	 Packet.new{"id",  "Ban injection"},
 	 Packet.new{"sh",  "Ban speedhack"},
 	 Packet.new{"2",   "Ask avatar refresh"},
-	 Packet.new{"S",   "Send sync ???"},
+	 -- when entering a new zone or interacting with an NPC
+	 Packet.new{"S",   "Synchronize"},
 	 Packet.new{"_",   "Pong"},
 	 Packet.new{"-",   "Ask NPC refresh"},
 	 -- k|.|pokecenter lavender|.\
