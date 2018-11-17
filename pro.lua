@@ -22,7 +22,9 @@ end
 
 clientToServerPacketInfos = {
 	 Packet.new{"N",   "Talk to NPC", {"NPC ID"}},
-	 Packet.new{"p",   "Pokedex"},
+	 -- param a to receive details
+	 -- param l to receive the list
+	 Packet.new{"p",   "Request Pokedex", "a: details, l: list"},
 	 Packet.new{"h",   "Evolution accept"},
 	 Packet.new{"j",   "Evolution cancel"},
 	 Packet.new{"+",   "Login"},
@@ -32,7 +34,8 @@ clientToServerPacketInfos = {
 	 Packet.new{"?",   "Reorder pokemon"},
 	 Packet.new{"}",   "[DEPRECATED] Move", {"Direction"}},
 	 Packet.new{"#",   "Move", {"Direction"}},
-	 Packet.new{"w",   "Chat send message"},
+	 -- This does the same as '{' to send a chat message but in practice is only used for surf, destroy and dive commands
+	 Packet.new{"w",   "Send surf, destroy and dive"},
 	 Packet.new{"a",   "Shop move learner"},
 	 Packet.new{".",   "Shop egg learner"},
 	 Packet.new{"c",   "Shop pokemart"},
@@ -65,24 +68,38 @@ clientToServerPacketInfos = {
 	 Packet.new{"btt", "Ban speedhack"},
 	 Packet.new{"id",  "Ban injection"},
 	 Packet.new{"sh",  "Ban speedhack"},
-	 Packet.new{"2",   "Ask avatar refresh"},
 	 -- when entering a new zone or interacting with an NPC
-	 Packet.new{"S",   "Synchronize"},
-	 Packet.new{"_",   "Pong"},
+	 Packet.new{"S",   "Synchronize character"},
 	 Packet.new{"-",   "Ask NPC refresh"},
 	 -- k|.|pokecenter lavender|.\
-	 Packet.new{"k",   "Request map wild pokemon", {"Map name"}},
+	 Packet.new{"k",   "Request wild pokemon map", {"Map name"}},
 	 --   follow an instruction like Use Item (*)
 	 Packet.new{"^",   "Teach move", {"PokemonUid", "MoveUid"}},
 	 Packet.new{"{",   "Send message", {"Message"}},
-	 Packet.new{"1",   "Heartbeat"}
+	 Packet.new{"1",   "Heartbeat 1 (anti-cheat)"},
+	 -- Was used to ask the server to refresh the player on the other client around
+	 Packet.new{"2",   "Heartbeat 2 (anti-cheat)"},
+	 Packet.new{"x",   "Ready for Battle"},
+	 -- for any ping
+	 Packet.new{"_",   "Pong"},
+	 -- only for "'" request
+	 Packet.new{"'",   "Pong '"},
+	 Packet.new{"M",   "Request PC box"},
+	 Packet.new{")",   "Login success" },
+	 -- just a guess
+	 Packet.new{"g",   "Send online info to friend" },
+	 Packet.new{"=",   "Show mailbox" },
+	 Packet.new{"<",   "Move move up" },
+	 Packet.new{">",   "Move move down" },
+	 Packet.new{",",   "Reset IVs" },
+	 Packet.new{"RE",  "Send report" }
 }
 
 serverToClientPacketInfos = {
 	 Packet.new{"w",   "Chat message", {"Message"}},
-	 Packet.new{".",   "Ping"},
+	 Packet.new{".",   "Ping ."},
 	 Packet.new{"-",   "???"},
-	 Packet.new{"U",   "Other player position", {{"Nickname"}}},
+	 Packet.new{"U",   "[OBSOLETE] Other player info", {{"Nickname"}}},
 	 Packet.new{"E",   "Game time"},
 	 Packet.new{"i",   "Character informations"},
 	 Packet.new{"(",   "Cooldowns ???"},
@@ -95,7 +112,7 @@ serverToClientPacketInfos = {
 	 Packet.new{"8",   "Error invalid region trade"},     -- The person you are trading with can not take Pokemon from another region.
 	 Packet.new{"9",   "Error trade pokemon quest item"}, -- You can not trade a Pokemon that it is holding a Quest Item.
 	 Packet.new{"0",   "Error trade legendary"},          -- You can not trade a Legendary Pokemon.
-	 Packet.new{"'",   "Does nothing?"},
+	 Packet.new{"'",   "Ping '"},
 	 Packet.new{"k",   "Map wild pokemon"},
 	 Packet.new{"x",   "Pokemon happyness"},
 	 Packet.new{"p",   "Pokedex message"},
@@ -131,13 +148,15 @@ serverToClientPacketInfos = {
 	 Packet.new{"i",   "Guild join"},
 	 Packet.new{"d",   "Money"},
 	 Packet.new{"(",   "Fishing cooldown"},
-	 Packet.new{"5",   "Login"},
+	 Packet.new{"5",   "Login (ping _)"},
 	 Packet.new{"6",   "Login invalid user"},
 	 Packet.new{"1",   "Create NPC"},
-	 Packet.new{")",   "Login queue"},
+	 Packet.new{")",   "Login queue (ping _)"},
 	 Packet.new{"R",   "Dialogue"},
 	 Packet.new{"#",   "Profile update"},
-	 Packet.new{"C",   "Channel list", {{"Count", "ID", "Name"}}}
+	 Packet.new{"C",   "Channel list", {{"Count", "ID", "Name"}}},
+	 Packet.new{"=",   "Other player info", {{"Nickname", "x", "y"}}},
+	 Packet.new{"<",   "Inspection info", {{"Nickname", "Wins", "Losses", "Disconnects", "Subscription date", "?", "Play time", "Total Pokemon", "Appearance"}}}
 }
 
 local endOfPacket = "%.\\\r\n"
